@@ -192,7 +192,7 @@ def run():
 		# --------------------------------------
 		ep_data_out[0] = 0x24	# r/w flag
 
-		ep_data_out[1] = 0x10	# reg addres (32-bit value)
+		ep_data_out[1] = 20	# reg addres (32-bit value)
 		ep_data_out[2] = 0
 		ep_data_out[3] = 0
 		ep_data_out[4] = 0
