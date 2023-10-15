@@ -15,4 +15,8 @@ The value and novel approach of this product architecture provides a more sophis
 
  
 
+# 2. Details
+The tutorial source code queries all USB devices for a specific PID and VID.  Once found, descriptor fields are read gathering detailed information about the bridge.  This is done as an example to customers expedited the time it takes to get started.  This is also important because the bridge serial number is needed if multiple bridges are connected to a single host system. 
+
+Once all useful information is received, a register access (read) operation is performed on the bridge internal memory space used for configuration. The register being accessed is a hardcoded key value specifically for customer sanity checks to verify the USB link and configuration interface 0 is functional.  
 
