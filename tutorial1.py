@@ -17,11 +17,10 @@
 
 
 
-#import sys
+
 import ctypes as ct
 import libusb as usb
-#import time
-#import argparse
+
 
 
 #
@@ -40,7 +39,7 @@ DEV_MODE = True
 
 
 #
-# Libusb1 variables/data structures
+# Libusb variables/data structures
 #
 dev = None
 dev_found = False
@@ -70,6 +69,7 @@ def run():
 
 	# get list of USB devices
 	cnt = usb.get_device_list(None, ct.byref(devs))
+	# error check
 	if cnt < 0:
 		print(f'get device list failure: {cnt}')
 		return -1
@@ -83,6 +83,7 @@ def run():
 		# get device descriptor information
 		desc = usb.device_descriptor()
 		r = usb.get_device_descriptor(dev, ct.byref(desc))
+		# error check
 		if r < 0:
 			print(f'failed to get device descriptor: {r}')
 			return -1
@@ -122,6 +123,7 @@ def run():
 	if(dev_found == True):
 
 		r = usb.open(dev, dev_handle)
+		# error check
 		if r < 0:
 			print(f"ret val: {r} - {usb.strerror(r)}")
 			print("failed to open device!")
@@ -138,8 +140,8 @@ def run():
 		# Print bridge string information
 		#
 		# utf-16 decoding
-		# skip first two bytes b/c they are USB protocol stuff not SN
-		# - don't really need the below for loop for manual decoding anymore
+		# skip first two bytes b/c they are USB protocol specific not SN
+		#
 		print('\n')
 		sn_string_d = bytes(sn_string)[2:].decode("utf-16") # type - string
 		pd_string_d = bytes(pd_string)[2:].decode("utf-16") # type - string
