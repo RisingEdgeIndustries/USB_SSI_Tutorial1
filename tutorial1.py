@@ -11,6 +11,12 @@
 # which finds, connects and displays bridge descriptor
 # information.
 #
+# Disclaimer:
+# ----------------------
+# This code is provided as is and is not supported
+# by RisingEdgeIndsutreis in any way. The user
+# accepts all risk when running all or some of 
+# this python module.
 #
 
 
@@ -115,6 +121,7 @@ def run():
 			break
 
 		i += 1
+
 
 
 	#
