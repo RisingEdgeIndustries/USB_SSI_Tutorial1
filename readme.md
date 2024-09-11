@@ -6,7 +6,7 @@ The first part of this tutorial covers communications using a REIndustries provi
 
 The second part of the tutorial shows how to use the Python libusb1.0 third party library directly. This approach is more complicated, but likely more desireable for custom software applications that interface to the USB2F-SSI-0-1A module.
 
-![screenshot](./supplemental/pic1-top.jpg)
+![screenshot](supplemental/pic1-top.jpg)
 
 ## 1.1 Bridge Overview
 The USB bridge used in this tutorial is the USB2F-SSI-0-1A which, in general, is a small module that converts native USB traffic into SPI / synchronous serial traffic for an embedded system.  This part number supports 0.1" pitch through hole headers on both sides of the SOM and can fit in a standard prototyping breadboard. Many other configurations are available so visit [RisingEdgeIndustries](https://www.risingedgeindustries.com) online for more information or to ask about a custom solution. 
