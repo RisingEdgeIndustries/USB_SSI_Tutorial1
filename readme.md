@@ -71,7 +71,8 @@ As far as the source code goes for this part, there isn't a lot to explain. Part
 
 
 Just to point out how easy it is to get up and running, below is all the source code needed:
-```
+
+```python
 
 from USB_SSI_Libs.rei_usb_lib import USB20F_Device
 
