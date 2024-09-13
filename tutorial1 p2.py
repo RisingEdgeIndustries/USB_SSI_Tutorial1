@@ -7,7 +7,7 @@
 #
 # Project Description:
 # ----------------------
-# Supplemental code supporting USB bridge tutorial 1
+# Supplemental code supporting USB bridge tutorial 1 p1
 # which finds, connects and displays bridge descriptor
 # information.
 #
@@ -172,11 +172,6 @@ def run():
 		print("\n[Configuration]")
 		r = usb.get_configuration(dev_handle, device_configuration)
 		print(f"r: {r}, configuration: {device_configuration.contents}")
-
-
-
-
-
 
 
 
