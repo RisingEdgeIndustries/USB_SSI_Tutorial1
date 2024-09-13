@@ -15,13 +15,13 @@
 # ----------------------------------------------------------------
 # Project Notes:
 # ----------------------------------------------------------------
-# The REIndustries library comes with a logger. The user can pass
-# a filename for the file logger into the library which is done
-# here.
+# 1. The REIndustries library comes with a logger. The user can pass
+# 	a filename for the file logger into the library which is done
+# 	here.
 #
 
 
-import rei_usb_lib as rusblib
+from USB_SSI_Libs.rei_usb_lib import USB20F_Device
 
 
 
@@ -29,16 +29,16 @@ import rei_usb_lib as rusblib
 log_file_name = "tst_dump-regs"
 
 # open USB lib
-usb_dev0 = rusblib.USB20F_Device(quiet=True, name=log_file_name)
+usb_dev0 = USB20F_Device(quiet=True, name=log_file_name)
 usb_dev0.open_usb()
 
-
+# read and print all configuration register info
 usb_dev0.dump_regspace()
 
-
+# read and print all USB descriptor info
 usb_dev0.dump_descriptors()
 
-
+# close brige USB library
 usb_dev0.close_usb()
 
 

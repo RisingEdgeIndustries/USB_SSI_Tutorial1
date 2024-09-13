@@ -69,10 +69,11 @@ As far as the source code goes for this part, there isn't a lot to explain. Part
 -	USB descriptor information
 -	USB bridge internal configuration register values
 
---> insert code here.
 
 
 # 3. Part 2: Libusb1.0 Bridge Direct Access
+--> This part 2 performs a single register access so just use that as example and explain the rd/wr protocol.
+
 When the REIndustries library is not used, a user space driver must be selected and the software engineer is responsible for integrating it in their application. For part 2, we have  used a Python version of libusb1.0 for simplicity. This requires some C-types coding, but is still pretty straight forward.
 
 In part 2 we are performing the same operations of reading the USB bridge descriptor information as well as the internal USB bridge register space information and reporting it to the user. The only difference is that we will be directly accessing the user space driver.
