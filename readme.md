@@ -56,11 +56,11 @@ This means the user must select a user space driver (there are multiple availabl
 # 2. Part 1: REIndustries Simple Library
 Part 1 of this tutorial covers how to connect and query basic bridge information via the USB interface. 
 
-Every USB device has information a software application can query to learn more about the device. This information is contained in data structures called descriptors. Some of this desccriptor information can be requested by software to interrogate the USB device and ensure it is both the correct device to talk to.
+Every USB device has information a software application can query to learn more about the device. This information is contained in data structures called descriptors. Some of this desccriptor information can be requested by software to interrogate the USB device and ensure it is both the correct and expected device.
 
-The USB descriptor information is read from the device as well as the entire configuration register space information. The register space is read via the configuration interface INT0 (interrupt 0). All of this access is done using an example library from REIndustries using the Python programming language. This is the 'plug-and-play' solution for users who are looking for a simple and quick way to get up and running.
+The USB descriptor information is read from the device as well as the entire configuration register space information. The register space is read via the configuration interface INT0 (interrupt 0). All of this access is done using an example library from REIndustries with the Python programming language. This is the 'plug-and-play' solution for users who are looking for simplest and easiest way to get up and running.
 
-One dependancy for any application interacting with the USB bridges is the usb bridge library. This library repo should be cloned for custom development of software applications and should also be cloned with any tutorials such as this one.
+One dependancy for any application interacting with the USB bridges is the usb bridge library. This library repo should be cloned for custom development of software applications and should also be cloned with any tutorials such as this one. This repo can be found on our github.
 
 
 
@@ -69,6 +69,30 @@ As far as the source code goes for this part, there isn't a lot to explain. Part
 -	USB descriptor information
 -	USB bridge internal configuration register values
 
+
+Just to point out how easy it is to get up and running, below is all the source code needed:
+```
+
+from USB_SSI_Libs.rei_usb_lib import USB20F_Device
+
+
+
+# for logger
+log_file_name = "tst_dump-regs"
+
+# open USB lib
+usb_dev0 = USB20F_Device(quiet=True, name=log_file_name)
+usb_dev0.open_usb()
+
+# read and print all configuration register info
+usb_dev0.dump_regspace()
+
+# read and print all USB descriptor info
+usb_dev0.dump_descriptors()
+
+# close brige USB library
+usb_dev0.close_usb()
+```
 
 
 # 3. Part 2: Libusb1.0 Bridge Direct Access
