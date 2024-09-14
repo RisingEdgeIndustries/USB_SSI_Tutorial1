@@ -140,15 +140,11 @@ The write command is similar to the read command with the addition of a bit mask
 The first byte is a rd/wr flag and for read commands this will be 0x42. The second field will be a 32-bit register address. The bit mask and data values fields are self explanatory and are also 32 bits wide. The rest of the data in the USB packet is 'don't care' information.
 
 
+The main take-away here is that any USB data packet sent over INT0 interface is a read or write register access command that should adhere to the read and write protocol shown above. In tutorial 1 p1 these register access commands are used to retrieve configuration register data, but the nuts and bolts shown here are obfuscated from the user with the REIndustries library example API call.
 
 
-The main take-away here is that any USB data packet sent over INT0 interface is a read or write register access command that should adhere to the read and write protocol shown above.
+At this point, we have a basic understanding of the software system so let's dive into part 2 of the tutorial.
 
---> discuss the registere we are reading and discuss the read protocol.
-
---> discuss how the rei library performs this single read for every register space in part 1.
-
---> show read protocol diagram potentially
 
 --> step the the basic blocks of the application and discuss briefly what each code block does.
 
