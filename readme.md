@@ -50,11 +50,15 @@ The traffic flow through the bridge is shown below. This block diagram describes
 When plugged in, the bridge tells Windows to load WINUSB.sys as the kernel space driver automatically and leaves the user space driver selection up to the user. A diagram of this is shown below:
 ![alt text](./supplemental/BD4.png)
 
-This means the user must select a user space driver (there are multiple available 3d party drivers) to actually talk to the USB bridge. REIndustries has selected libusb1.0 to use for these tutorials as it is cross platform and supported as a Python library. This design and architecture choice was made to provide more advanced control to software engineers that are looking for a more robust and advanced link than a virtual serial port, but still want to keep things reasonably simple. For users looking for a COTS solution, a Python user space drive can be used as in this example and easily wrapped as we have shown with the associated usb library example supporting this tutorial series.
+This means the user must select a user space driver (there are multiple available 3d party drivers) to actually talk to the USB bridge. REIndustries has selected libusb1.0 (the Python implementation is just libusb) to use for these tutorials as it is cross platform and supported as a Python library. This design and architecture choice was made to provide more advanced control to software engineers that are looking for a more robust and advanced link compared to a virtual serial port, but still want to keep things reasonably simple. For users looking for a COTS solution, a Python user space drive can be used as in this example and easily wrapped as we have shown with the associated usb library example supporting this tutorial series.
+
+For all tutorials, the Python libusb library can be installed using "pip install libusb". This must be performed as a first step in this tutorial series.
 
 
 # 2. Part 1: REIndustries Simple Library
 Part 1 of this tutorial covers how to connect and query basic bridge information via the USB interface. 
+
+--> Note that the USB_SSI_Libs repo must be clone inside this tutorial directory to work
 
 Every USB device has information a software application can query to learn more about the device. This information is contained in data structures called descriptors. Some of this desccriptor information can be requested by software to interrogate the USB device and ensure it is both the correct and expected device.
 
@@ -97,11 +101,54 @@ usb_dev0.close_usb()
 
 
 # 3. Part 2: Libusb1.0 Bridge Direct Access
---> This part 2 performs a single register access so just use that as example and explain the rd/wr protocol.
+When the REIndustries library is not used, a user space driver must be selected and the software engineer is responsible for integrating it in their application. For part 2, we have  used a Python library wrapping libusb1.0 for simplicity as a 3'd party user space driver. This library can be pip installed easily, but does require slightly more advanced programming skills as it uses C-types. Overall it is still quite straight forward. Since we are not using the REIndustris example library the USB_SSI_Lib does not neeed to be clone.
 
-When the REIndustries library is not used, a user space driver must be selected and the software engineer is responsible for integrating it in their application. For part 2, we have  used a Python version of libusb1.0 for simplicity. This requires some C-types coding, but is still pretty straight forward.
+In this part of tutorial 1, we will perform the same process for querying the USB descriptor information, but instead of dumping all the configuration registers we will perform a manual read from a single configuration register.
 
-In part 2 we are performing the same operations of reading the USB bridge descriptor information as well as the internal USB bridge register space information and reporting it to the user. The only difference is that we will be directly accessing the user space driver.
+Before getting started, a quick mention of the configuration register access protocol is necessary. Users can change the bridge configuration and check operational status (such as frame buffer capacity, errors etc...) using interupt interface 0 (INT0). This is a 64kB/s max USB interrupt interface which allows users to send 64 byte blocks of data to the bridge which contain commands. All commands are register access commmands which means they are reads or write to a 32 bit register. The bits in these registers control a variety of different things regarding bridge operation.
+
+Some examples are:
+-	Saving configuration register info to non-volatile memory
+-	Setting timeout timers for SSI/SPI communications
+-	Enabling/disabling RX/TX LEDs
+-	Operational error status info and error codes
+-	Different bridge operating modes (see other tutorials in series)
+
+
+To perform a register read, as we will do in this tutorial, a simple protocol is followed and shown below:
+![alt text](./supplemental/BD5.png)
+The above protocl shows that the first byte of the 64 byte packet is the rd/wr flag. So when set to 0x24 a read command is being issued and when set to 0x42 a write command is being issued. In this case, a 0x24 is loaded in byte 0 and the read address is loaded next. The address is 32 bits wide with the LSB first. An example of the pertinent protocol bytes is shown belo.
+
+```python
+		ep_data_out[0] = 0x24	# r/w flag
+
+		ep_data_out[1] = 20	# reg addres (32-bit value)
+		ep_data_out[2] = 0
+		ep_data_out[3] = 0
+		ep_data_out[4] = 0
+```
+Note that ep_data_out is a 64 byte array:
+```python
+EP1OUT_SIZE = 64*1
+ep_data_out = (ct.c_ubyte*(EP1OUT_SIZE))()
+```
+The write command is not used in this tutorial, but a brief explanation is shown below:
+![alt text](./supplemental/BD6.png)
+
+The write command is similar to the read command with the addition of a bit mask and data field. The bit mask allows register write commands to control which bits are modified. This allows the user to leave bits that are not being change at their existing value. There is no need for the user to perform read-modify-write operations.
+
+The first byte is a rd/wr flag and for read commands this will be 0x42. The second field will be a 32-bit register address. The bit mask and data values fields are self explanatory and are also 32 bits wide. The rest of the data in the USB packet is 'don't care' information.
+
+
+
+
+The main take-away here is that any USB data packet sent over INT0 interface is a read or write register access command that should adhere to the read and write protocol shown above.
+
+--> discuss the registere we are reading and discuss the read protocol.
+
+--> discuss how the rei library performs this single read for every register space in part 1.
+
+--> show read protocol diagram potentially
 
 --> step the the basic blocks of the application and discuss briefly what each code block does.
 
