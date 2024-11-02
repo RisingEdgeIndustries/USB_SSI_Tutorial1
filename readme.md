@@ -58,6 +58,11 @@ This means the user must select a user space driver (there are multiple availabl
 For all tutorials, the Python libusb library can be installed using "pip install libusb". This must be performed as a first step in this tutorial series.
 
 
+## 1.2 Mechanical
+
+--> Discuss mechanical dimensions here with screenshot
+
+
 # 2. Part 1: REIndustries Simple Library
 Part 1 of this tutorial covers how to connect and query basic bridge information via the USB interface. 
 
@@ -361,7 +366,9 @@ At this point we now have an open USB interface and device handle that allows us
 		print(f"{'reg_value: ':.<30}{f'{rd_val:#08x}':.>20}")
 ```
 
+Below is a screenshot from the bridge user's guide which shows the SKEY register being read. This register is selected because it has a known value we can quickly verify to prove out a successful USB register read.
 
+![alt text](./supplemental/skey.png)
 
 
 
