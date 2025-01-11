@@ -374,12 +374,11 @@ At this point we now have an open USB interface and device handle that allows us
 
 Below is a screenshot from the bridge user's guide which shows the SKEY register being read. This register is selected because it has a known value we can quickly verify to prove out a successful USB register read. Any time a sanity check is needed to verify the USB link is working correctly and the bridge USB interface is functional it is recommended to use this register as the value is hard coded and always known.
 
-![alt text](./supplemental/skey.png)
-
 As can be seen below in the yellow box, the bridge returned its static key value to our software application which matches value defined by the user's guide. 
 
 ![alt text](./supplemental/skey_result.png)
 
+<a href="link" style="text-align: center">
 <img src="./supplemental/skey_result.png" width="400" height="800" align="center">
 
 --> figure out how to set size of image smaller
