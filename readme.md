@@ -64,14 +64,16 @@ For all tutorials, the Python libusb library can be installed using "pip install
 
 
 ## 1.2 Mechanical
+The bridge module consists of an 0.062" thick PCB with a USB-C connector for software application connectivity and unloaded headers (via holes) supporting the embedded sysnchronous serial interfaces. Customers can load either male or female headers depending on the required interface to their PCB hardware system.
 
+The dimensions shown below are 1.223 inches long by 0.805 inches high. These are PCB edge to edge dimensions.
 ![alt text](./supplemental/dimensions.png)
 
 
 # 2. Part 1: REIndustries Simple Library
 Part 1 of this tutorial covers how to connect and query basic bridge information via the USB interface. 
 
---> Note that the USB_SSI_Libs repo must be clone inside this tutorial directory to work
+*Note that the USB_SSI_Libs repo must be clone inside this tutorial directory to work
 
 Every USB device has information a software application can query to learn more about the device. This information is contained in data structures called descriptors. Some of this desccriptor information can be requested by software to interrogate the USB device and ensure it is both the correct and expected device.
 
