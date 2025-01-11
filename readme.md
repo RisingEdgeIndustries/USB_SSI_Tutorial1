@@ -18,6 +18,11 @@ The USB bridge used in this tutorial is the USB2F-SSI-0-1A which, in general, is
 
 The USB link is USB2.0 full speed composite device with 3x interfaces.  One interface is for internal bridge register access supporting operational and configuration changes. The other two interfaces are for high and low throughput data paths.  Each data path works with native USB 2.0 64 byte packets of data. The lower datarate interface is an interrupt interface capable of 64kB/s. This interface is polled by the USB host (workstation) every 1mS supporting deterministic latency. The second data interface is a BULK interface which can operate in excess of 650kB/s (5.2Mbit/s). This datarate is dependant on how much bandwidth is available on the USB bus per USB 2.0 BULK interface protocol. A BULK interface utilizes as much free bandwidth in each USB frame as possible to transfer data.
 
+<u>Interface Summary</u>:
+-	Interface 0: Bridge register access
+-	Interface 1: INTERRUPT low throughput interface
+-	Interface 2: BULK high throughput interface
+
 The embedded systems side of this bridge consists of two unidirectional SSI/SPI ports. The TX and RX data is separate to allow the customer embedded system to operate based on data frame interrupts rather than polling the bridge checking for data constantly. The polling approach eats up valuable customer embedded system bandwidth / CPU cycles.
 
 The master SSI/SPI port forwards all USB 64 byte packets out to the target embedded system as a 68 byte frame. The frame is larger than the USB packet because 4 additional bytes of meta data are added. The meta data allows target embedded systems to know which USB interface (INT1 or BULK2) the 64 byte packet came from. This allows the embedded systems engineer to be aware of which USB interface software sent the packet over. When the embedded system assembles a frame to transmist to the USB bridge RX interface, the firmware engineer must add this meta data to the frame so the bridge knows which USB interface to forward the 64 byte payload of the 68 byte frame to.
@@ -60,7 +65,7 @@ For all tutorials, the Python libusb library can be installed using "pip install
 
 ## 1.2 Mechanical
 
---> Discuss mechanical dimensions here with screenshot
+![alt text](./supplemental/dimensions.png)
 
 
 # 2. Part 1: REIndustries Simple Library
