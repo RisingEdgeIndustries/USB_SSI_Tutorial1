@@ -380,7 +380,7 @@ As can be seen below in the yellow box, the bridge returned its static key value
 
 ![alt text](./supplemental/skey_result.png)
 
-<img src="./supplemental/skey_result.png" width="400" height="800">
+<img src="./supplemental/skey_result.png" width="400" height="800" align="center">
 
 --> figure out how to set size of image smaller
 
