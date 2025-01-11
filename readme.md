@@ -73,15 +73,14 @@ The dimensions shown below are 1.223 inches long by 0.805 inches high. These are
 # 2. Part 1: REIndustries Simple Library
 Part 1 of this tutorial covers how to connect and query basic bridge information via the USB interface. 
 
-*Note that the USB_SSI_Libs repo must be clone inside this tutorial directory to work
-
 Every USB device has information a software application can query to learn more about the device. This information is contained in data structures called descriptors. Some of this desccriptor information can be requested by software to interrogate the USB device and ensure it is both the correct and expected device.
 
 The USB descriptor information is read from the device as well as the entire configuration register space information. The register space is read via the configuration interface INT0 (interrupt 0). All of this access is done using an example library from REIndustries with the Python programming language. This is the 'plug-and-play' solution for users who are looking for simplest and easiest way to get up and running.
 
 One dependancy for any application interacting with the USB bridges is the usb bridge library. This library repo should be cloned for custom development of software applications and should also be cloned with any tutorials such as this one. This repo can be found on our github.
 
-
+*Note: The USB_SSI_Libs repo must be clone inside this tutorial directory to work.
+*Note: It is recommended USB_SSI_Libs repo is cloned inside customer repos or project directories for development.
 
 As far as the source code goes for this part, there isn't a lot to explain. Part 1 uses the REIndustries library to open a communication link with the bridge and request bridge specific information. The information requested is the following two items:
 
@@ -373,13 +372,15 @@ At this point we now have an open USB interface and device handle that allows us
 		print(f"{'reg_value: ':.<30}{f'{rd_val:#08x}':.>20}")
 ```
 
-Below is a screenshot from the bridge user's guide which shows the SKEY register being read. This register is selected because it has a known value we can quickly verify to prove out a successful USB register read.
+Below is a screenshot from the bridge user's guide which shows the SKEY register being read. This register is selected because it has a known value we can quickly verify to prove out a successful USB register read. Any time a sanity check is needed to verify the USB link is working correctly and the bridge USB interface is functional it is recommended to use this register as the value is hard coded and always known.
 
 ![alt text](./supplemental/skey.png)
 
+As can be seen below in the yellow box, the bridge returned its static key value to our software application which matches value defined by the user's guide. 
 
+![alt text](./supplemental/skey_result.png)
 
---> discus the actual register we are reading and why
+This concludes our tutorial 1 (parts 1 and 2). In other tutorials we will explore more advanced features and performance of the usb bridge.
 
 
 
