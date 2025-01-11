@@ -376,10 +376,11 @@ Below is a screenshot from the bridge user's guide which shows the SKEY register
 
 As can be seen below in the yellow box, the bridge returned its static key value to our software application which matches value defined by the user's guide. 
 
-![alt text](./supplemental/skey_result.png)
 
-<a href="link" style="text-align: center">
-<img src="./supplemental/skey_result.png" width="400" height="800" align="center">
+
+<div align='center'>
+	<img src="./supplemental/skey_result.png" width="400" height="800" align="center">
+</div>
 
 --> figure out how to set size of image smaller
 
