@@ -380,6 +380,12 @@ As can be seen below in the yellow box, the bridge returned its static key value
 
 ![alt text](./supplemental/skey_result.png)
 
+<img src="./supplemental/skey_result.png" width="200" height="100">
+
+--> figure out how to set size of image smaller
+
+
+
 This concludes our tutorial 1 (parts 1 and 2). In other tutorials we will explore more advanced features and performance of the usb bridge.
 
 
