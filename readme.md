@@ -6,15 +6,16 @@ The first part of this tutorial covers communications using a REIndustries provi
 
 The second part of the tutorial shows how to use the Python libusb1.0 third party library directly. This approach is more complicated, but likely more desireable for custom software applications that interface to the USB2F-SSI-0-1A module.
 
-Bridge Top View             | Bridge Side View
-:-------------------------:|:-------------------------:
-![alt text](./supplemental/pic2-top-small.png) |  ![alt text](./supplemental/pic1_side_small.png)
 
 **Critical Notes:**
 -	User must clone REIndustries USB_SSI_Libs example library inside tutorial folder for tutorials to work!
 
 ## 1.1 Bridge Overview
 The USB bridge used in this tutorial is the USB2F-SSI-0-1A which, in general, is a small module that converts native USB traffic into SPI / synchronous serial traffic for an embedded system.  This part number supports 0.1" pitch through hole headers on both sides of the SOM and can fit in a standard prototyping breadboard. Many other configurations are available so visit [RisingEdgeIndustries](https://www.risingedgeindustries.com) online for more information or to ask about a custom solution. 
+
+Bridge Top View             | Bridge Side View
+:-------------------------:|:-------------------------:
+![alt text](./supplemental/pic2-top-small.png) |  ![alt text](./supplemental/pic1_side_small.png)
 
 The USB link is USB2.0 full speed composite device with 3x interfaces.  One interface is for internal bridge register access supporting operational and configuration changes. The other two interfaces are for high and low throughput data paths.  Each data path works with native USB 2.0 64 byte packets of data. The lower datarate interface is an interrupt interface capable of 64kB/s. This interface is polled by the USB host (workstation) every 1mS supporting deterministic latency. The second data interface is a BULK interface which can operate in excess of 650kB/s (5.2Mbit/s). This datarate is dependant on how much bandwidth is available on the USB bus per USB 2.0 BULK interface protocol. A BULK interface utilizes as much free bandwidth in each USB frame as possible to transfer data.
 
@@ -31,7 +32,7 @@ The meta data allows the software engineer and firmware engineer on either side 
 
 An example use case may be that an embedded system needs to send low data rate telemetry information back to software which can be done over INT1 (interrupt interface 1). The software engineer can launch a thread that constantly monitors for data on the USB interface and when available, reads the data and passes it to the main software application. The BULK2 (bulk 2) interface is used specifically for large data transfers to and from the target embedded system.
 
-The bridge module is ideal for users that need a more intelligent solution than a virtual serial port for software application to embedded system communication but also need to retain the ease and siimplicity of a simple serial link.
+The bridge module is ideal for users that need a more intelligent solution than a virtual serial port for software application to embedded system communication but also need to retain the ease and simplicity of a simple serial link.
 
 Some of the key features/improvements are shown below:
 -	3x different USB interfaces: Internal bridge register access, 64kB/s deterministic latency data interface, 650+kB/s high throughput interface.
@@ -51,6 +52,10 @@ The INT1 and BULK2 interface packets are received by the bridge, meta data captu
 
 A diagram of the SSI frame side of the transfer is shown below:
 ![alt text](./supplemental/BD2.png)
+
+--> Add scope capture of whole frame
+--> Add scope capture of first X bytes showing header info
+--> Mention the clockrate/data rate of SSI ports can be adjusted b/w 2 and 8Mhz and these scope captures are with the bridge being configured with 2Mhz SSI clock rates. Show the frame duration and do a quick calc to show it is running at 2Mhz.
 
 The traffic flow through the bridge is shown below. This block diagram describes USB packets from software on the left flowing through the bridge to a target embedded system on the right.
 ![alt text](./supplemental/BD3.png)
