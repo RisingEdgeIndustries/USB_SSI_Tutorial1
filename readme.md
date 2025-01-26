@@ -51,6 +51,9 @@ This diagram shows all 3x USB interfaces including the internal bridge register 
 An example of the USB interfaces in operation is shown below. The BULK interface traffic from tutorial 2 part 1 is captured by a USB protocol analyzer showing a basic single BULK data packet exchange between host software through the bridge to an embedded system PCB and the response back to the host software application (which is our Python tutorial 2 in this case). The first part of this tutorial sends out a single BULK 64 byte data packet to the bridge over interface 2 - the bulk interface. This 64 byte packet contains a header byte of value 10 and an incrementing counter from 1-5. The first byte tells the embedded system on the other side of the brdige to echo the packet back to the bridge. The next 5 bytes are an incrementing counter and the rest of the 64 bytes are 'don't care' values. The data packet should look like this: [0x0A, 0x01, 0x02, 0x03, 0x04, 0x05....].
 ![alt text](./supplemental/usb-prot-analyzer1.png)
 
+Below is a zoomed in view of the traffic.
+![alt text](./supplemental/usb-prot-analyzer2.png)
+
 As is standard with USB, the direction of transactions are from the perspective of the host (so the tutorial 2 part 1 Python module). The OUT transaction is what the tutorial Python module sends to the brdige and the IN transaction is the read transaction buy the Python module that reads the echo'd packet from our embedded system.
 
 
