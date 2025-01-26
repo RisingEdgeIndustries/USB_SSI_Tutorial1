@@ -48,18 +48,24 @@ As mentioned above, 64 byte packets are transferred over each USB interface. A b
 
 This diagram shows all 3x USB interfaces including the internal bridge register access interface (INT0). The 64 byte data packets sent over INT0 are commands that support changing bridge register settings and this data is not forwarded out of the SSI serial ports to a target embedded system.
 
+An example of the USB interfaces in operation is shown below. The BULK interface traffic from tutorial 2 part 1 is captured by a USB protocol analyzer showing a basic single BULK data packet exchange between host software through the bridge to an embedded system PCB and the response back to the host software application (which is our Python tutorial 2 in this case). The first part of this tutorial sends out a single BULK 64 byte data packet to the bridge over interface 2 - the bulk interface. This 64 byte packet contains a header byte of value 10 and an incrementing counter from 1-5. The first byte tells the embedded system on the other side of the brdige to echo the packet back to the bridge. The next 5 bytes are an incrementing counter and the rest of the 64 bytes are 'don't care' values. The data packet should look like this: [0x0A, 0x01, 0x02, 0x03, 0x04, 0x05....].
+![alt text](./supplemental/usb-prot-analyzer1.png)
+
+As is standard with USB, the direction of transactions are from the perspective of the host (so the tutorial 2 part 1 Python module). The OUT transaction is what the tutorial Python module sends to the brdige and the IN transaction is the read transaction buy the Python module that reads the echo'd packet from our embedded system.
+
+
 The INT1 and BULK2 interface packets are received by the bridge, meta data capturing which USB interface they were received on is wrapped around the 64 byte data packet yielding the 68 byte frame and that frame is sent out of the master SSI port to the target embedded system.
 
 A diagram of the SSI frame side of the transfer is shown below:
 ![alt text](./supplemental/BD2.png)
 
-The the complete SSI frame scope capture is shown below. This is what is actually seen on the SSI master IO pins which correlate to the above diagram. Because this scope capture is zoomed out you cannot see individual bytes, but as described previously, the USB packet is the middle 64 bytes in this frame with 2x bytes appended to the start and end of the USB packet yielding the 68 byte SSI frame.
+The the complete SSI frame scope capture is shown below. This is what is actually seen on the SSI master IO pins which correlate to the above diagram. Because this scope capture is zoomed out you cannot see individual bytes, but as described previously, the USB packet is the middle 64 bytes in this frame with 2x bytes inserted at the start and end of the USB packet yielding the 68 byte SSI frame.
 ![alt text](./supplemental/ssi-frame2.png)
 
 A zoomed in view of the SSI frame is shown below from the same scope capture. This shows the SSI frame 2x byte header as well as the beginning of the USB packet data. The upper data base with the decoder enabled shows the TX data from the bridge to the embedded system. This frame is carrying a header of 0x02 denoting the BULK interface was used. The second header byte is not implemented at this time. The first byte in the USB packet is 0x0A with 5x bytes of counter information from 1 - 5. This scope capture was taken using tutorial 2 part 1 to generate the traffic so we see what we expect from running that Python module.
 ![alt text](./supplemental/ssi-frame1.png)
 
-It is also important to note that the physical signaling is runnig with an SCLK of 2Mhz. This is adjustable and can be changed from 2Mhz to 8Mhz. For relaxed signal integrity the lower end of 2Mhz is supported with high bandwidth isn't necessary. For full bandwidth, it is recommended to use the 8Mhz clock rate. This allows the bridge to empty its buffers faster therefore handling more incoming data.
+It is also important to note that the physical signaling is runnig with an SCK of 2Mhz. This is adjustable and can be changed from 2Mhz to 8Mhz. For relaxed signal integrity the lower end of 2Mhz is supported with high bandwidth isn't necessary. For full bandwidth, it is recommended to use the 8Mhz clock rate. This allows the bridge to empty its buffers faster therefore handling more incoming data.
 
 The traffic flow through the bridge is shown below. This block diagram describes USB packets from software on the left flowing through the bridge to a target embedded system on the right.
 ![alt text](./supplemental/BD3.png)
