@@ -1,10 +1,10 @@
 
 # 1. Overview
-This tutorial introduces the USB to SSI/SPI bridge which translates native USB traffic to synchronous serial communications. In this tutorial we will cover the system architecture and purpose of the bridge module as well as two basic connect and power-up excersise.
+This tutorial introduces the USB to SSI/SPI bridge which translates native USB traffic to synchronous serial communications. In this tutorial we will cover the system architecture and purpose of the bridge module as well as two basic connect and power-up exercise.
 
 The first part of this tutorial covers communications using a REIndustries provided Python library which simplifies the software user space driver access. This library is a simple wrapper for the libusb1.0 Python library. This approach is the simplest and fastest way to get up and running.
 
-The second part of the tutorial shows how to use the Python libusb1.0 third party library directly. This approach is more complicated, but likely more desireable for custom software applications that interface to the USB2F-SSI-0-1A module.
+The second part of the tutorial shows how to use the Python libusb1.0 third party library directly. This approach is more complicated, but likely more desirable  for custom software applications that interface to the USB2F-SSI-0-1A module.
 
 
 **Critical Notes:**
@@ -17,7 +17,7 @@ Bridge Top View             | Bridge Side View
 :-------------------------:|:-------------------------:
 ![alt text](./supplemental/pic2-top-small.png) |  ![alt text](./supplemental/pic1_side_small.png)
 
-The USB link is USB2.0 full speed composite device with 3x interfaces.  One interface is for internal bridge register access supporting operational and configuration changes. The other two interfaces are for high and low throughput data paths.  Each data path works with native USB 2.0 64 byte packets of data. The lower datarate interface is an interrupt interface capable of 64kB/s. This interface is polled by the USB host (workstation) every 1mS supporting deterministic latency. The second data interface is a BULK interface which can operate in excess of 650kB/s (5.2Mbit/s). This datarate is dependant on how much bandwidth is available on the USB bus per USB 2.0 BULK interface protocol. A BULK interface utilizes as much free bandwidth in each USB frame as possible to transfer data.
+The USB link is USB2.0 full speed composite device with 3x interfaces.  One interface is for internal bridge register access supporting operational and configuration changes. The other two interfaces are for high and low throughput data paths.  Each data path works with native USB 2.0 64 byte packets of data. The lower data rate interface is an interrupt interface capable of 64kB/s  (USB specification theoretical). This interface is polled by the USB host (workstation) every 1mS supporting deterministic latency. The second data interface is a BULK interface which can operate in excess of 650kB/s (5.2Mbit/s). This data rate is dependent on how much bandwidth is available on the USB bus per USB 2.0 BULK interface protocol. A BULK interface utilizes as much free bandwidth in each USB frame as possible to transfer data. Both of these throughput numbers are also dependent on how much traffic is being transmitted through each interface.
 
 <u>Interface Summary</u>:
 -	Interface 0: Bridge register access
@@ -26,7 +26,7 @@ The USB link is USB2.0 full speed composite device with 3x interfaces.  One inte
 
 The embedded systems side of this bridge consists of two unidirectional SSI/SPI ports. The TX and RX data is separate to allow the customer embedded system to operate based on data frame interrupts rather than polling the bridge checking for data constantly. The polling approach eats up valuable customer embedded system bandwidth / CPU cycles.
 
-The master SSI/SPI port forwards all USB 64 byte packets out to the target embedded system as a 68 byte frame. The frame is larger than the USB packet because 4 additional bytes of meta data are added. The meta data allows target embedded systems to know which USB interface (INT1 or BULK2) the 64 byte packet came from. This allows the embedded systems engineer to be aware of which USB interface software sent the packet over. When the embedded system assembles a frame to transmist to the USB bridge RX interface, the firmware engineer must add this meta data to the frame so the bridge knows which USB interface to forward the 64 byte payload of the 68 byte frame to.
+The master SSI/SPI port forwards all USB 64 byte packets out to the target embedded system as a 68 byte frame. The frame is larger than the USB packet because 4 additional bytes of meta data are added. The meta data allows target embedded systems to know which USB interface (INT1 or BULK2) the 64 byte packet came from. This allows the embedded systems engineer to be aware of which USB interface software sent the packet over. When the embedded system assembles a frame to transmit to the USB bridge RX interface, the firmware engineer must add this meta data to the frame so the bridge knows which USB interface to forward the 64 byte payload of the 68 byte frame to.
 
 The meta data allows the software engineer and firmware engineer on either side of the bridge to stay in sync and know which interfaces data comes from and should be sent to. This can be very valuable when users need to logically separate different types of traffic. 
 
@@ -48,13 +48,13 @@ As mentioned above, 64 byte packets are transferred over each USB interface. A b
 
 This diagram shows all 3x USB interfaces including the internal bridge register access interface (INT0). The 64 byte data packets sent over INT0 are commands that support changing bridge register settings and this data is not forwarded out of the SSI serial ports to a target embedded system.
 
-An example of the USB interfaces in operation is shown below. The BULK interface traffic from tutorial 2 part 1 is captured by a USB protocol analyzer showing a basic single BULK data packet exchange between host software through the bridge to an embedded system PCB and the response back to the host software application (which is our Python tutorial 2 in this case). The first part of this tutorial sends out a single BULK 64 byte data packet to the bridge over interface 2 - the bulk interface. This 64 byte packet contains a header byte of value 10 and an incrementing counter from 1-5. The first byte tells the embedded system on the other side of the brdige to echo the packet back to the bridge. The next 5 bytes are an incrementing counter and the rest of the 64 bytes are 'don't care' values. The data packet should look like this: [0x0A, 0x01, 0x02, 0x03, 0x04, 0x05....].
+An example of the USB interfaces in operation is shown below. The BULK interface traffic from tutorial 2 part 1 is captured by a USB protocol analyzer showing a basic single BULK data packet exchange between host software through the bridge to an embedded system PCB and the response back to the host software application (which is our Python tutorial 2 in this case). The first part of this tutorial sends out a single BULK 64 byte data packet to the bridge over interface 2 - the bulk interface. This 64 byte packet contains a header byte of value 10 and an incrementing counter from 1-5. The first byte tells the embedded system on the other side of the bridge to echo the packet back to the bridge. The next 5 bytes are an incrementing counter and the rest of the 64 bytes are 'don't care' values. The data packet should look like this: [0x0A, 0x01, 0x02, 0x03, 0x04, 0x05....].
 ![alt text](./supplemental/usb-prot-analyzer1.png)
 
-Below is a zoomed in view of the traffic.
+Below is a zoomed in view of the traffic. Please note that the 0x4B and 0xC3 in the DATA1/0 packets are part of the USB protocol which do not inhibit the 64 byte data packet allotment.
 ![alt text](./supplemental/usb-prot-analyzer2.png)
 
-As is standard with USB, the direction of transactions are from the perspective of the host (so the tutorial 2 part 1 Python module). The OUT transaction is what the tutorial Python module sends to the brdige and the IN transaction is the read transaction buy the Python module that reads the echo'd packet from our embedded system.
+As is standard with USB, the direction of transactions are from the perspective of the host (so the tutorial 2 part 1 Python module). The OUT transaction is what the tutorial Python module sends to the bridge and the IN transaction is the read transaction by the Python module that reads the echo'd packet from our embedded system.
 
 
 The INT1 and BULK2 interface packets are received by the bridge, meta data capturing which USB interface they were received on is wrapped around the 64 byte data packet yielding the 68 byte frame and that frame is sent out of the master SSI port to the target embedded system.
@@ -62,13 +62,13 @@ The INT1 and BULK2 interface packets are received by the bridge, meta data captu
 A diagram of the SSI frame side of the transfer is shown below:
 ![alt text](./supplemental/BD2.png)
 
-The the complete SSI frame scope capture is shown below. This is what is actually seen on the SSI master IO pins which correlate to the above diagram. Because this scope capture is zoomed out you cannot see individual bytes, but as described previously, the USB packet is the middle 64 bytes in this frame with 2x bytes inserted at the start and end of the USB packet yielding the 68 byte SSI frame.
+The complete SSI frame scope capture is shown below. This is what is actually seen on the SSI master IO pins which correlate to the above diagram. Because this scope capture is zoomed out you cannot see individual bytes, but as described previously, the USB packet is the middle 64 bytes in this frame with 2x bytes inserted at the start and end of the USB packet yielding the 68 byte SSI frame.
 ![alt text](./supplemental/ssi-frame2.png)
 
 A zoomed in view of the SSI frame is shown below from the same scope capture. This shows the SSI frame 2x byte header as well as the beginning of the USB packet data. The upper data base with the decoder enabled shows the TX data from the bridge to the embedded system. This frame is carrying a header of 0x02 denoting the BULK interface was used. The second header byte is not implemented at this time. The first byte in the USB packet is 0x0A with 5x bytes of counter information from 1 - 5. This scope capture was taken using tutorial 2 part 1 to generate the traffic so we see what we expect from running that Python module.
 ![alt text](./supplemental/ssi-frame1.png)
 
-It is also important to note that the physical signaling is runnig with an SCK of 2Mhz. This is adjustable and can be changed from 2Mhz to 8Mhz. For relaxed signal integrity the lower end of 2Mhz is supported with high bandwidth isn't necessary. For full bandwidth, it is recommended to use the 8Mhz clock rate. This allows the bridge to empty its buffers faster therefore handling more incoming data.
+It is also important to note that the physical signaling is running with an SCK of 2Mhz. This is adjustable and can be changed from 2Mhz to 8Mhz. For full bandwidth, it is recommended to use the 8Mhz clock rate. This allows the bridge to empty its buffers faster therefore handling more incoming data.
 
 The traffic flow through the bridge is shown below. This block diagram describes USB packets from software on the left flowing through the bridge to a target embedded system on the right.
 ![alt text](./supplemental/BD3.png)
@@ -82,7 +82,7 @@ For all tutorials, the Python libusb library can be installed using "pip install
 
 
 ## 1.2 Mechanical
-The bridge module consists of an 0.062" thick PCB with a USB-C connector for software application connectivity and unloaded headers (via holes) supporting the embedded sysnchronous serial interfaces. Customers can load either male or female headers depending on the required interface to their PCB hardware system.
+The bridge module consists of an 0.062" thick PCB with a USB-C connector for software application connectivity and unloaded headers (via holes) supporting the embedded synchronous  serial interfaces. Customers can load either male or female headers depending on the required interface to their PCB hardware system.
 
 The dimensions shown below are 1.223 inches long by 0.805 inches high. These are PCB edge to edge dimensions.
 ![alt text](./supplemental/dimensions.png)
@@ -91,11 +91,11 @@ The dimensions shown below are 1.223 inches long by 0.805 inches high. These are
 # 2. Part 1: REIndustries Simple Library
 Part 1 of this tutorial covers how to connect and query basic bridge information via the USB interface. 
 
-Every USB device has information a software application can query to learn more about the device. This information is contained in data structures called descriptors. Some of this desccriptor information can be requested by software to interrogate the USB device and ensure it is both the correct and expected device.
+Every USB device has information a software application can query to learn more about the device. This information is contained in data structures called descriptors. Some of this descriptor  information can be requested by software to interrogate the USB device and ensure it is both the correct and expected device.
 
 The USB descriptor information is read from the device as well as the entire configuration register space information. The register space is read via the configuration interface INT0 (interrupt 0). All of this access is done using an example library from REIndustries with the Python programming language. This is the 'plug-and-play' solution for users who are looking for simplest and easiest way to get up and running.
 
-One dependancy for any application interacting with the USB bridges is the usb bridge library. This library repo should be cloned for custom development of software applications and should also be cloned with any tutorials such as this one. This repo can be found on our github.
+One dependency for any application interacting with the USB bridges is the usb bridge library. This library repo should be cloned for custom development of software applications and should also be cloned with any tutorials such as this one. This repo can be found on our github.
 
 *Note: The USB_SSI_Libs repo must be clone inside this tutorial directory to work.
 *Note: It is recommended USB_SSI_Libs repo is cloned inside customer repos or project directories for development.
@@ -133,11 +133,11 @@ usb_dev0.close_usb()
 
 
 # 3. Part 2: Libusb Bridge Direct Access
-When the REIndustries library is not used, a user space driver must be selected and the software engineer is responsible for integrating it in their application. For part 2, we have  used a Python library wrapping libusb1.0 for simplicity as a 3'd party user space driver. This library can be pip installed easily, but does require slightly more advanced programming skills as it uses C-types. Overall it is still quite straight forward. Since we are not using the REIndustris example library the USB_SSI_Lib does not neeed to be clone.
+When the REIndustries library is not used, a user space driver must be selected and the software engineer is responsible for integrating it in their application. For part 2, we have  used a Python library wrapping libusb1.0 for simplicity as a 3'd party user space driver. This library can be pip installed easily, but does require slightly more advanced programming skills as it uses C-types. Overall it is still quite straight forward. Since we are not using the REIndustries example library the USB_SSI_Lib does not need to be clone.
 
 In this part of tutorial 1, we will perform the same process for querying the USB descriptor information, but instead of dumping all the configuration registers we will perform a manual read from a single configuration register.
 
-Before getting started, a quick mention of the configuration register access protocol is necessary. Users can change the bridge configuration and check operational status (such as frame buffer capacity, errors etc...) using interupt interface 0 (INT0). This is a 64kB/s max USB interrupt interface which allows users to send 64 byte blocks of data to the bridge which contain commands. All commands are register access commmands which means they are reads or write to a 32 bit register. The bits in these registers control a variety of different things regarding bridge operation.
+Before getting started, a quick mention of the configuration register access protocol is necessary. Users can change the bridge configuration and check operational status (such as frame buffer capacity, errors etc...) using interrupt interface 0 (INT0). This is a 64kB/s max USB interrupt interface which allows users to send 64 byte blocks of data to the bridge which contain commands. All commands are register access commmands which means they are reads or write to a 32 bit register. The bits in these registers control a variety of different things regarding bridge operation.
 
 Some examples are:
 -	Saving configuration register info to non-volatile memory
@@ -149,7 +149,7 @@ Some examples are:
 
 To perform a register read, as we will do in this tutorial, a simple protocol is followed and shown below:
 ![alt text](./supplemental/BD5.png)
-The above protocl shows that the first byte of the 64 byte packet is the rd/wr flag. So when set to 0x24 a read command is being issued and when set to 0x42 a write command is being issued. In this case, a 0x24 is loaded in byte 0 and the read address is loaded next. The address is 32 bits wide with the LSB first. An example of the pertinent protocol bytes is shown belo.
+The above protocol shows that the first byte of the 64 byte packet is the rd/wr flag. So when set to 0x24 a read command is being issued and when set to 0x42 a write command is being issued. In this case, a 0x24 is loaded in byte 0 and the read address is loaded next. The address is 32 bits wide with the LSB first. An example of the pertinent protocol bytes is shown belo.
 
 ```python
 		ep_data_out[0] = 0x24	# r/w flag
@@ -169,7 +169,7 @@ The write command is not used in this tutorial, but a brief explanation is shown
 
 The write command is similar to the read command with the addition of a bit mask and data field. The bit mask allows register write commands to control which bits are modified. This allows the user to leave bits that are not being change at their existing value. There is no need for the user to perform read-modify-write operations.
 
-The first byte is a rd/wr flag and for read commands this will be 0x42. The second field will be a 32-bit register address. The bit mask and data values fields are self explanatory and are also 32 bits wide. The rest of the data in the USB packet is 'don't care' information.
+The first byte is a rd/wr flag and for read commands this will be 0x24. The second field will be a 32-bit register address. The bit mask and data values fields are self explanatory and are also 32 bits wide. The rest of the data in the USB packet is 'don't care' information.
 
 
 The main take-away here is that any USB data packet sent over INT0 interface is a read or write register access command that should adhere to the read and write protocol shown above. In tutorial 1 p1 these register access commands are used to retrieve configuration register data, but the nuts and bolts shown here are obfuscated from the user with the REIndustries library example API call.
@@ -215,7 +215,7 @@ bulk_transferred = ct.POINTER(ct.c_int)()
 device_configuration.contents = ct.c_int(0)
 bulk_transferred.contents = ct.c_int(0)
 ```
-The buffers for data (in and out of USB brige interfaces) is always 64 bytes per transaction so each endpoit buffer/array is 64 bytes long. Timeouts and USB endpoint IDs are also setup. Since the USB interface is a composite device there are three interfaces each with a pair of endpoints (buffers) for transferring the 64 byte blocks of data. In this example we use INT0 which has IN and OUT endpoint addresses 0x81 and 0x01 respectively. There are also a few arrays for the string descriptors and other pieces of information we want to support.
+The buffers for data (in and out of USB bridge interfaces) is always 64 bytes per transaction so each endpoint buffer/array is 64 bytes long. Timeouts and USB endpoint IDs are also setup. Since the USB interface is a composite device there are three interfaces each with a pair of endpoints (buffers) for transferring the 64 byte blocks of data. In this example we use INT0 which has IN and OUT endpoint addresses 0x81 and 0x01 respectively. There are also a few arrays for the string descriptors and other pieces of information we want to support.
 
 The main function in this module is the run() function which is where all the USB magic actually happens. The first step is to search for the USB bridge via VID/PID descriptor information.
 
@@ -391,6 +391,8 @@ At this point we now have an open USB interface and device handle that allows us
 ```
 
 Below is a screenshot from the bridge user's guide which shows the SKEY register being read. This register is selected because it has a known value we can quickly verify to prove out a successful USB register read. Any time a sanity check is needed to verify the USB link is working correctly and the bridge USB interface is functional it is recommended to use this register as the value is hard coded and always known.
+
+![alt text](./supplemental/skey.png)
 
 As can be seen below in the yellow box, the bridge returned its static key value to our software application which matches value defined by the user's guide. 
 
